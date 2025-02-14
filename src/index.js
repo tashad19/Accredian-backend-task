@@ -4,12 +4,22 @@ const app = express();
 const referralRoutes = require("./routes/referralRoutes");
 const cors = require("cors");
 
+const allowedOrigins = [
+  'http://localhost:5173',  // Local development
+  'https://accredian-frontend-task-coral-nu.vercel.app'  // Deployed Vercel frontend
+];
+
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
-
 
 app.use(express.json());
 app.use("/api/referrals", referralRoutes);
